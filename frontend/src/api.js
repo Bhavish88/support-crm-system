@@ -4,7 +4,18 @@
  */
 // In unified deployment (FastAPI serving dist), API_BASE is empty (uses relative paths).
 // If deployed separately (e.g. Vercel frontend + Render backend), set VITE_API_URL in environment.
-const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+// Automatically falls back to the production Render backend when running on Vercel if VITE_API_URL is omitted.
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")) {
+    return "https://support-crm-system-68t9.onrender.com";
+  }
+  return "";
+};
+
+export const API_BASE = getApiBase();
 
 export const api = {
   // 1. List Tickets (with optional status & search query)

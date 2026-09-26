@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { api } from './api';
 
 /**
  * Utility: Format ISO timestamp into clean readable date/time
@@ -317,15 +318,7 @@ function CreateTicketModal({ isOpen, onClose, onSuccess, showToast }) {
 
     try {
       setIsSubmitting(true);
-      const res = await fetch("/api/tickets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.detail?.[0]?.msg || data.detail || "Failed to create ticket");
-      }
+      const data = await api.createTicket(formData);
       showToast(`Ticket ${data.ticket_id} created successfully!`, "success");
       onSuccess();
       onClose();
@@ -436,9 +429,7 @@ function TicketDetailModal({ ticketId, onClose, onTicketUpdated, showToast }) {
     if (!ticketId) return;
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/tickets/${ticketId}`);
-      if (!res.ok) throw new Error("Could not load ticket");
-      const data = await res.json();
+      const data = await api.getTicket(ticketId);
       setTicket(data);
       setStatusVal(data.status);
     } catch (err) {
@@ -458,12 +449,7 @@ function TicketDetailModal({ ticketId, onClose, onTicketUpdated, showToast }) {
   const handleStatusChange = async (newStatus) => {
     try {
       setIsUpdatingStatus(true);
-      const res = await fetch(`/api/tickets/${ticketId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus })
-      });
-      if (!res.ok) throw new Error("Status update failed");
+      await api.updateTicket(ticketId, { status: newStatus });
       setStatusVal(newStatus);
       showToast(`Status updated to ${newStatus}`, "success");
       fetchDetail();
@@ -482,12 +468,7 @@ function TicketDetailModal({ ticketId, onClose, onTicketUpdated, showToast }) {
 
     try {
       setIsAddingNote(true);
-      const res = await fetch(`/api/tickets/${ticketId}/notes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note_text: noteText.trim() })
-      });
-      if (!res.ok) throw new Error("Failed to add note");
+      await api.addNote(ticketId, noteText.trim());
       setNoteText("");
       showToast("Note added to ticket", "success");
       fetchDetail();
@@ -666,13 +647,7 @@ export default function App() {
   const fetchTickets = useCallback(async () => {
     try {
       setIsLoading(true);
-      const params = new URLSearchParams();
-      if (statusFilter !== "All") params.append("status", statusFilter);
-      if (debouncedSearch.trim()) params.append("search", debouncedSearch.trim());
-
-      const res = await fetch(`/api/tickets?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to load tickets");
-      const data = await res.json();
+      const data = await api.getTickets(statusFilter, debouncedSearch);
       setTickets(data);
     } catch (err) {
       showToast(err.message, "error");
@@ -684,11 +659,8 @@ export default function App() {
   // Fetch Stats
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch("/api/stats");
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
-      }
+      const data = await api.getStats();
+      setStats(data);
     } catch (err) {
       console.error("Stats load failed", err);
     }
@@ -708,8 +680,7 @@ export default function App() {
     if (!confirm("Load default demo dataset into CRM?")) return;
     try {
       setIsResetting(true);
-      const res = await fetch("/api/seed?reset=true", { method: "POST" });
-      if (!res.ok) throw new Error("Reset failed");
+      await api.seedDemoData(true);
       showToast("Demo tickets loaded successfully!", "success");
       fetchTickets();
       fetchStats();

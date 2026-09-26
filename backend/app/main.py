@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, Query, status
@@ -31,9 +32,26 @@ app = FastAPI(
 )
 
 # CORS configuration to allow local and deployed React frontend
+origins = [
+    "https://support-crm-system-eight.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
+cors_env = os.getenv("CORS_ORIGINS")
+if cors_env:
+    for origin in cors_env.split(","):
+        clean_origin = origin.strip()
+        if clean_origin and clean_origin not in origins:
+            origins.append(clean_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
