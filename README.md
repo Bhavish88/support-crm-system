@@ -23,7 +23,7 @@ This project was built strictly according to the specifications in the **Datastr
 | Layer | Technology | Rationale |
 |---|---|---|
 | **Backend Framework** | **Python FastAPI** | Asynchronous, type-safe REST framework with automatic OpenAPI/Swagger documentation. |
-| **Database** | **SQLite** (local) / **PostgreSQL** (prod) | Zero-configuration file database locally; seamlessly switches to PostgreSQL in cloud deployments via `DATABASE_URL`. |
+| **Database** | **SQLite** / **PostgreSQL** | SQLite is used for local development, with PostgreSQL supported through the `DATABASE_URL` environment variable for production deployments. |
 | **ORM & Models** | **SQLAlchemy 2.0** | Robust relational mapping, cascading relationships, and query construction. |
 | **Data Validation** | **Pydantic v2** | Strict schema validation, request filtering, and automatic response formatting. |
 | **Frontend UI** | **React 18** | Interactive component tree with real-time debounced search, modal dialogs, and dynamic status pills. |
@@ -80,7 +80,7 @@ Interactive API documentation is automatically accessible at `http://127.0.0.1:8
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/your-username/Support_CRM_system.git
+git clone https://github.com/Bhavish88/support-crm-system.git
 cd Support_CRM_system
 ```
 
@@ -134,35 +134,6 @@ All 8 test cases verify ticket creation, listing, status filtering, multi-field 
 
 ---
 
-## ☁️ Deployment Guide
-
-### Deploying to Render (Recommended Unified Deployment)
-1. Sign in to [Render.com](https://render.com).
-2. Click **"New +"** → **"Web Service"**.
-3. Connect your GitHub repository (`Support_CRM_system`).
-4. Configure service settings:
-   - **Environment**: `Python 3`
-   - **Build Command**: `./build.sh`  
-     *(Or: `pip install -r requirements.txt && npm --prefix frontend install && npm --prefix frontend run build`)*
-   - **Start Command**: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
-5. *(Optional PostgreSQL Database)*:
-   - Under **Environment Variables**, add `DATABASE_URL` pointing to your PostgreSQL instance. If omitted, the service runs automatically on SQLite.
-6. Click **"Create Web Service"**. Render will install backend & frontend dependencies, run the Vite build, and launch FastAPI!
-
-### Deploying to Railway
-1. Sign in to [Railway.app](https://railway.app).
-2. Click **"New Project"** → **"Deploy from GitHub repo"**.
-3. Select your `Support_CRM_system` repository.
-4. Under **Settings** → **Build Command**, specify:
-   ```bash
-   ./build.sh
-   ```
-5. Railway will automatically detect the [Procfile](file:///c:/B-Projects/Support_CRM_system/Procfile) for the start command.
-6. Link an optional PostgreSQL database or use the default SQLite.
-
-
----
-
 ## 💡 Thoughtful Extra / "Stand Out" Features Implemented
 
 As highlighted in the assessment guidelines (*"what would make this genuinely useful for a real support team?"*), the following extras were thoughtfully added without over-complicating the core code:
@@ -179,32 +150,31 @@ As highlighted in the assessment guidelines (*"what would make this genuinely us
 Support_CRM_system/
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py           # Package marker
-│   │   ├── database.py           # Engine & session management (SQLite/Postgres)
-│   │   ├── models.py             # 2-table schema (Ticket & Note)
-│   │   ├── schemas.py            # Pydantic v2 schemas
-│   │   ├── crud.py               # CRUD logic & auto-ticket-id generation
-│   │   ├── seed_data.py          # Realistic sample dataset
-│   │   └── main.py               # FastAPI app, REST endpoints, static mount
-│   ├── requirements.txt          # Python dependencies
-│   └── test_api.py               # Pytest automated test suite
+│   │   ├── __init__.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── crud.py
+│   │   ├── seed_data.py
+│   │   └── main.py
+│   ├── requirements.txt
+│   └── test_api.py
+│
 ├── frontend/
-│   ├── dist/                     # Pre-compiled React bundle served by FastAPI
 │   ├── src/
-│   │   ├── App.jsx               # React SPA with modals, filters & state
-│   │   ├── api.js                # API REST client (supports VITE_API_URL)
-│   │   ├── index.css             # Responsive CSS design system
-│   │   └── main.jsx              # React 18 entrypoint
-│   ├── index.html                # HTML5 shell
-│   ├── package.json              # Frontend dependencies and build scripts
-│   └── vite.config.js            # Vite configuration with /api proxy
-├── requirements.txt              # Root Python dependencies for cloud buildpacks
-├── build.sh                      # Production build script (pip + npm build)
-├── STEP_BY_STEP_LOG.md           # Granular development progress record
-├── DEMO_VIDEO_SCRIPT.md          # 3-5 minute demo video walkthrough script
-├── SUBMISSION_TEMPLATE.md        # Email template for Datastraw submission
-├── Procfile                      # Render/Railway process file
-├── .env.example                  # Environment configuration example
-├── .gitignore                    # Git ignore file
-└── README.md                     # Main documentation
+│   │   ├── App.jsx
+│   │   ├── api.js
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
+│
+├── .env.example
+├── .gitignore
+├── Procfile
+├── README.md
+├── build.sh
+└── requirements.txt
 ```
