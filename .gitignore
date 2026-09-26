@@ -36,3 +36,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Local project notes
+DEMO_VIDEO_SCRIPT.md
+STEP_BY_STEP_LOG.md
+SUBMISSION_TEMPLATE.md
