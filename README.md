@@ -1,20 +1,31 @@
 # Customer Support Ticketing CRM System
 
 > **Datastraw Assessment Test — Hiring Assignment**  
-> A full-stack, production-ready Customer Support Management CRM system built with **Python FastAPI**, **SQLite**, and **React**.
+> A full-stack Customer Support Management CRM system built with **Python FastAPI**, **React**, **SQLAlchemy**, and **SQLite/PostgreSQL**.
 
 ---
 
 ## 🎯 Overview & Objectives
 
-This project was built strictly according to the specifications in the **Datastraw Assessment Test**. It allows support teams to create tickets, search and filter across customer records, update ticket statuses, and collaborate through timestamped activity notes.
+This project was built according to the core specifications of the **Datastraw Assessment Test**, with several additional usability features. It allows support teams to create tickets, search and filter across customer records, update ticket statuses, and collaborate through timestamped activity notes.
 
 ### Key Architecture Highlights:
 - **Clean REST API**: FastAPI backend with Swagger docs, Pydantic v2 validation, and SQLAlchemy ORM.
-- **Minimal 2-Table Schema**: `tickets` and `notes` tables designed for high performance with proper indexes.
-- **Unified Full-Stack React + Vite Architecture**: React 18 SPA built with Vite and custom CSS design system, with pre-compiled production build in `frontend/dist/` served directly by FastAPI. Zero runtime Node required in production!
-- **100% Automated Test Coverage**: Comprehensive `pytest` test suite covering all REST endpoints and edge cases.
+- **Minimal 2-Table Schema**: `tickets` and `notes` tables designed with proper indexes and foreign key relationships.
+- **Decoupled Production Architecture**: React + Vite frontend deployed on **Vercel**, connecting to a **FastAPI** backend and **PostgreSQL** database on **Render**. The `VITE_API_URL` environment variable connects the Vercel frontend to the Render FastAPI backend.
+- **Automated API Testing**: Pytest test suite covering the core REST API functionality, including ticket creation, listing, filtering, searching, details, updates, notes, and error handling.
 - **One-Click Demo Seeding**: Pre-loaded with realistic customer scenarios (billing issues, login errors, webhook failures) for instant evaluator testing.
+
+---
+
+## 🌐 Deployed Architecture
+
+The production application is deployed using a decoupled setup:
+- Frontend: [React Application on Vercel](https://support-crm-system-eight.vercel.app)
+- Backend API: [FastAPI Service on Render](https://support-crm-system-68t9.onrender.com)
+- Database: PostgreSQL on Render
+
+The `VITE_API_URL` environment variable configures the Vercel frontend to communicate directly with the Render FastAPI backend, with FastAPI CORS middleware configured to allow requests from the Vercel production origin.
 
 ---
 
@@ -22,7 +33,7 @@ This project was built strictly according to the specifications in the **Datastr
 
 | Layer | Technology | Rationale |
 |---|---|---|
-| **Backend Framework** | **Python FastAPI** | Asynchronous, type-safe REST framework with automatic OpenAPI/Swagger documentation. |
+| **Backend Framework** | **Python FastAPI** | Type-safe REST framework with automatic OpenAPI/Swagger documentation. |
 | **Database** | **SQLite** / **PostgreSQL** | SQLite is used for local development, with PostgreSQL supported through the `DATABASE_URL` environment variable for production deployments. |
 | **ORM & Models** | **SQLAlchemy 2.0** | Robust relational mapping, cascading relationships, and query construction. |
 | **Data Validation** | **Pydantic v2** | Strict schema validation, request filtering, and automatic response formatting. |
@@ -81,7 +92,7 @@ Interactive API documentation is automatically accessible at `http://127.0.0.1:8
 ### 2. Clone the Repository
 ```bash
 git clone https://github.com/Bhavish88/support-crm-system.git
-cd Support_CRM_system
+cd support-crm-system
 ```
 
 ### 3. Backend Setup & Run (Terminal 1)
@@ -98,8 +109,8 @@ source backend/venv/bin/activate
 pip install -r backend/requirements.txt
 python -m uvicorn backend.app.main:app --reload --port 8000
 ```
-- Backend REST API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- Swagger Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- [Backend REST API](http://127.0.0.1:8000)
+- [Swagger Docs](http://127.0.0.1:8000/docs)
 
 ### 4. Frontend Setup & Run (Terminal 2)
 ```bash
@@ -107,15 +118,15 @@ cd frontend
 npm install
 npm run dev
 ```
-- Frontend React App: [http://localhost:5173/](http://localhost:5173/)  
+- [Frontend React App](http://localhost:5173)  
 *(Vite automatically proxies `/api` requests to the FastAPI backend at `http://127.0.0.1:8000`)*
 
-### 5. Production Build
+### 5. Frontend Production Build
 ```bash
 cd frontend
 npm run build
 ```
-*(Produces a production bundle in `frontend/dist/` which FastAPI automatically serves when running in production)*
+*(Builds optimized static assets into `frontend/dist/` for production deployment)*
 
 ---
 
